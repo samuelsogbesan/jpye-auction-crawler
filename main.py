@@ -12,25 +12,23 @@ class Item:
         self.parseData()
 
     def __str__(self):
-        
-        return "LOT: " + self.lot + " LOT NO: " + self.lotNo + ", "+self.lotTitle + ", PRICE £" + self.price + " at " + self.timeRemaining + " remaining"
+        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + " at " + self.timeRemaining + " remaining"
 
     def parseData(self):
         tag= "h5"
         regex = """(?P<tag>{})(?P<data>.*?)(?P<endTag>/(?P=tag))""".format(tag)
         dataPoints = re.findall(regex,self.data)
         dataStrings = []
-        for i in range(0,len(dataPoints)-1):
+        for i in range(0,len(dataPoints)):
             dataStrings.append("".join(dataPoints[i]).replace(tag+">","").replace("</"+tag,""))
         try:
             self.lotNo = dataStrings[0]
             self.lotTitle = dataStrings[1]
-            self.price = dataStrings[2]
-            self.timeRemaining = dataStrings[3]
+            self.price = dataStrings[2][7:]
+            self.timeRemaining = dataStrings[3]            
         except Exception:
-            print("The token was invalid")
-            return
-
+            return False
+            
 class Lot:
     def __init__(self):
         self.items = []
@@ -50,28 +48,17 @@ class Parser:
 
         try:
             self.content = requests.get(self.url).text.strip()
-            #print(self.content)
-            
-
         except Exception:
             print("The url supplied was invalid.")
             exit(-1)
         self.tokenise()
         self.lots = []
 
-
-    def tokenIsValid(self,token):
-        print(token)
-        for bit in token:
-            if(bit==""):
-                return False
-        return True
-
     def tokenise(self):
         
         #regex = """((?P<tag>[<{1}][^<>]+[>{1}]{1})((\s|\S){0,}(?P=tag)){0,})+"""
         #regex = """([<{1}][^<>]+(?P<tag>[>{1}])((\s|\S){0,}[//]{1}(?P=tag)){0,})+"""
-        regex = """(<{1})(?(1)(?P<tag>[\S|\s]+)|)"""
+        #regex = """(<{1})(?(1)(?P<tag>[\S|\s]+)|)"""
         #regex = """(<{1}(?P<main>tr).{0,}>{1}.{0,}<{1}/(?P=main)[.]{0,}>{1})"""
 
         regex = r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))"""
@@ -79,20 +66,26 @@ class Parser:
         strippedContent = self.content.strip().replace("\n","").replace("\t","").replace("\r","")
     
         tokens = re.findall(r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))""",strippedContent)
-        print(len(tokens))
+        
         arrToken = []
         for token in tokens:
-            if(self.tokenIsValid(token)):
+            if(self.tokenIsValid(token)==True):
                 t = Item(str(token).strip().replace("\n","").replace("\t","").replace("\r",""))
                 arrToken.append(t)            
         
         self.tokens = arrToken                              
 
+    def tokenIsValid(self,token):
+        if re.search("""(?P<tag>h5)(?P<data>.*?)(?P<endTag>/(?P=tag))""","".join(token)):
+            return True
+        return False
 
     def getContent(self):
         return self.content
+
     def getTokens(self):
         return self.tokens
+
     def __doc__(self):
         
         docString = """A Parser for the John Pye & Sons auction site.
@@ -106,6 +99,3 @@ t = Parser("https://www.johnpyeauctions.co.uk/lot_list.asp?saleid=7426&siteid=1"
 
 for token in t.tokens:
     print(token,"\n")
-    
-#print(len(t.tokens))
-#print(t.tokens[0])
