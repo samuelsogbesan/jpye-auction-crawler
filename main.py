@@ -12,7 +12,7 @@ class Item:
         self.parseData()
 
     def __str__(self):
-        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + " at " + self.timeRemaining + " remaining"
+        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + " at " + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
 
     def parseData(self):
         tag= "h5"
@@ -28,7 +28,7 @@ class Item:
             self.timeRemaining = dataStrings[3]            
         except Exception:
             return False
-            
+
 class Lot:
     def __init__(self):
         self.items = []
@@ -45,14 +45,15 @@ class Parser:
         self.url = url
         self.content = ""
         self.tokens = []
+        self.lots = []
 
         try:
-            self.content = requests.get(self.url).text.strip()
+            self.content = requests.get(self.url).text.strip().replace("\n","").replace("\t","").replace("\r","")
         except Exception:
             print("The url supplied was invalid.")
             exit(-1)
         self.tokenise()
-        self.lots = []
+
 
     def tokenise(self):
         
@@ -60,12 +61,8 @@ class Parser:
         #regex = """([<{1}][^<>]+(?P<tag>[>{1}])((\s|\S){0,}[//]{1}(?P=tag)){0,})+"""
         #regex = """(<{1})(?(1)(?P<tag>[\S|\s]+)|)"""
         #regex = """(<{1}(?P<main>tr).{0,}>{1}.{0,}<{1}/(?P=main)[.]{0,}>{1})"""
-
-        regex = r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))"""
-        
-        strippedContent = self.content.strip().replace("\n","").replace("\t","").replace("\r","")
-    
-        tokens = re.findall(r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))""",strippedContent)
+ 
+        tokens = re.findall(r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))""",self.content)
         
         arrToken = []
         for token in tokens:
@@ -94,8 +91,6 @@ class Parser:
         return docString
 
 t = Parser("https://www.johnpyeauctions.co.uk/lot_list.asp?saleid=7426&siteid=1")
-
-#print(t.getContent())
 
 for token in t.tokens:
     print(token,"\n")
