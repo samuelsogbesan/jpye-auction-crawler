@@ -12,7 +12,7 @@ class Item:
         self.parseData()
 
     def __str__(self):
-        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + " at " + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
+        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + "," + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
 
     def parseData(self):
         tag= "h5"
@@ -26,7 +26,7 @@ class Item:
             self.lotTitle = dataStrings[1]
             self.price = dataStrings[2][7:]
             self.timeRemaining = dataStrings[3]            
-        except Exception:
+        except Exception: #If the data is in the wrong format
             return False
 
 class Lot:
@@ -90,7 +90,10 @@ class Parser:
         """
         return docString
 
-t = Parser("https://www.johnpyeauctions.co.uk/lot_list.asp?saleid=7426&siteid=1")
+def main():
+    t = Parser("https://www.johnpyeauctions.co.uk/lot_list.asp?saleid=7426&siteid=1")
 
-for token in t.tokens:
-    print(token,"\n")
+    for token in t.tokens:
+        print(token,"\n")
+
+main()
