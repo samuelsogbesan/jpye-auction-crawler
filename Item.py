@@ -11,7 +11,8 @@ class Item:
         self.parseData()
 
     def __str__(self):
-        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + "," + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
+        
+        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + ", " + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
 
     def parseData(self):
         tag= "h5"
