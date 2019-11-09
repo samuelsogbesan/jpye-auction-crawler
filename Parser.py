@@ -49,7 +49,7 @@ class Parser:
         validTokens = []
         for token in self.tokens:
             
-            if re.search(string,token.lotTitle):
+            if re.search(string,token.lotTitle,re.IGNORECASE):
                 validTokens.append(token)
         return validTokens
 
