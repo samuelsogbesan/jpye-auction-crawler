@@ -24,7 +24,7 @@ class Parser:
         #regex = """(<{1})(?(1)(?P<tag>[\S|\s]+)|)"""
         #regex = """(<{1}(?P<main>tr).{0,}>{1}.{0,}<{1}/(?P=main)[.]{0,}>{1})"""
  
-        tokens = re.findall(r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>/(?P=tag))""",self.content)
+        tokens = re.findall(r"""(?P<tag>tr)(?P<data>.*?)(?P<endTag>\/(?P=tag))""",self.content)
         
         arrToken = []
         for token in tokens:
@@ -35,7 +35,7 @@ class Parser:
         self.tokens = arrToken                              
 
     def tokenIsValid(self,token):
-        if re.search("""(?P<tag>h5)(?P<data>.*?)(?P<endTag>/(?P=tag))""","".join(token)):
+        if re.search("""<(?P<tag>h5)>(?P<data>.*?)(?P<endTag>/(?P=tag)|img)""","".join(token)):
             return True
         return False
 
@@ -46,7 +46,7 @@ class Parser:
         return self.tokens
 
     def __doc__(self):
-        
+            
         docString = """A Parser for the John Pye & Sons auction site.
             Designed to make searching more customisable for Items on John Pye
         """

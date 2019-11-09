@@ -16,11 +16,12 @@ class Item:
 
     def parseData(self):
         tag= "h5"
-        regex = """(?P<tag>{})(?P<data>.*?)(?P<endTag>/(?P=tag))""".format(tag)
+        
+        regex = """<(?P<tag>{})>(?P<data>.*?)(?P<endTag>/(?P=tag)|img)""".format(tag)
         dataPoints = re.findall(regex,self.data)
         dataStrings = []
         for i in range(0,len(dataPoints)):
-            dataStrings.append("".join(dataPoints[i]).replace(tag+">","").replace("</"+tag,""))
+            dataStrings.append("".join(dataPoints[i]).replace(tag+">","").replace("</"+tag,"").replace(tag,"").replace("<img",""))
         try:
             self.lotNo = dataStrings[0]
             self.lotTitle = dataStrings[1]
