@@ -9,5 +9,6 @@ def main():
 
     for token in t.tokens:
         print(token,"\n")
-
+    
+    print(t.search("GAME"))
 main()

@@ -12,7 +12,7 @@ class Item:
 
     def __str__(self):
         
-        return  "LOT NO: " + self.lotNo + ", '"+self.lotTitle + "', PRICE £" + self.price + ", " + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
+        return  "LOT NO: " + str(self.lotNo) + ", '"+self.lotTitle + "', PRICE £" + str(self.price) + ", " + self.timeRemaining + (" remaining" if self.timeRemaining!="Ended" else "")
 
     def parseData(self):
         tag= "h5"
@@ -23,9 +23,9 @@ class Item:
         for i in range(0,len(dataPoints)):
             dataStrings.append("".join(dataPoints[i]).replace(tag+">","").replace("</"+tag,"").replace(tag,"").replace("<img",""))
         try:
-            self.lotNo = dataStrings[0]
+            self.lotNo = int(dataStrings[0])
             self.lotTitle = dataStrings[1]
-            self.price = dataStrings[2][7:]
+            self.price = float(dataStrings[2][7:])
             self.timeRemaining = dataStrings[3]            
         except Exception: #If the data is in the wrong format
             return False

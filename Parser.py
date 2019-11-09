@@ -45,6 +45,15 @@ class Parser:
     def getTokens(self):
         return self.tokens
 
+    def search(self,string):
+        validTokens = []
+        for token in self.tokens:
+            
+            if re.search(string,token.lotTitle):
+                validTokens.append(token)
+        return validTokens
+
+            
     def __doc__(self):
             
         docString = """A Parser for the John Pye & Sons auction site.
